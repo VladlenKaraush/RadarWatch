@@ -17,19 +17,22 @@ public class RadarView extends View {
     private float currentAngleSecond = 90;
     private float currentAngleMinute = 90;
     private float currentAngleHour = 90;
+    private int circleEdgeOffset = 4;
 
     //first two bytes for opacity (00 is transparent)
+    private int color1 = 0x00FF3333;
+    private int color2 = 0xFFFF3333;
     int[] outerColors = {
-            0x00FFFFFF,
-            0xFFFFFFFF,
+            color1,
+            color2,
     };
     int[] midColors = {
-            0x00FF0000,
-            0xFFFF0000,
+            color1,
+            color2,
     };
     int[] innerColors = {
-            0x000000FF,
-            0xFF0000FF,
+            color1,
+            color2,
     };
 
     //positions to change colors in midGradient
@@ -42,7 +45,7 @@ public class RadarView extends View {
 
     private static final int STROKE_WIDTH = 70;
     private static final int INNER_STROKE_WIDTH = 50;
-    private Paint innerPaint, outerPaint, whitePaint, midPaint, radarMapPaint;
+    private Paint innerPaint, outerPaint, whitePaint, midPaint, radarMapPaint, radarCirclesPaint;
     private RectF outerRect, midRect, innerRect;
     private int centerX, centerY, radius;
 
@@ -64,10 +67,17 @@ public class RadarView extends View {
     private void init() {
         if (!init) {
 
+            //light vertical and horizontal lines
             radarMapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             radarMapPaint.setStyle(Paint.Style.STROKE);
             radarMapPaint.setStrokeWidth(4);
-            radarMapPaint.setColor(Color.BLACK);
+            radarMapPaint.setColor(Color.rgb(255, 130, 130));
+
+            //black circles
+            radarCirclesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            radarCirclesPaint.setStyle(Paint.Style.STROKE);
+            radarCirclesPaint.setStrokeWidth(4);
+            radarCirclesPaint.setColor(Color.BLACK);
 
             //mid arc
             midPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -188,11 +198,27 @@ public class RadarView extends View {
 
         invalidate();
 
-        canvas.drawCircle(outerRect.centerX(), outerRect.centerY(), centerX / 4, radarMapPaint);
-        canvas.drawCircle(centerX, centerY, centerX / 3, radarMapPaint);
-        canvas.drawCircle(centerX, centerY, centerX / 2, radarMapPaint);
-        canvas.drawCircle(centerX, centerY, (float) (centerX / 1.3), radarMapPaint);
-        canvas.drawCircle(centerX, centerY, centerX, radarMapPaint);
+
+        //draw black circles between arcs
+        /*
+        canvas.drawCircle(centerX, centerY, centerX / 4, radarCirclesPaint);
+        canvas.drawCircle(centerX, centerY, centerX / 3, radarCirclesPaint);
+        canvas.drawCircle(centerX, centerY, centerX / 2, radarCirclesPaint);
+        canvas.drawCircle(centerX, centerY, (float) (centerX / 1.3), radarCirclesPaint);
+        */
+        //draw light lines across all view through the center
+
+        int midOffset = 50;
+        //horizontal line
+        canvas.drawLine(0, centerY, centerX  - midOffset, centerY, radarMapPaint);
+        canvas.drawLine(centerX + midOffset, centerY, centerX * 2, centerY, radarMapPaint);
+
+        //vertical line
+        canvas.drawLine(centerX, 0, centerX, centerY  - midOffset, radarMapPaint);
+        canvas.drawLine(centerX, centerY + midOffset, centerX, centerY  * 2, radarMapPaint);
+
+        //light mid circle
+        canvas.drawCircle(centerX, centerY, midOffset, radarMapPaint);
 
         //outer arc
         outerMatrix.preRotate(currentAngleMinute, centerX, centerY);
