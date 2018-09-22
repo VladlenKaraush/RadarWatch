@@ -13,21 +13,19 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import java.sql.Time;
-import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
 public class RadarView extends View {
 
     private float currentAngleSecond = 0;
-    private float currentAngleMinute = 90;
-    private float currentAngleHour = 180;
+    private float currentAngleMinute = 0;
+    private float currentAngleHour = 0;
     private final int outerCircleOffset = 4;
-    private final int sweepAngle = 70;
+    private final int sweepAngle = 90;
     private final int labelSize = 13;
     private int midCircleRadius = 50;
-    private int hour, minute, second;
+    private double hour, minute, second;
     private final String[] labels = {
             "12", "60", "9", "45", "30", "6", "15", "3"
     };
@@ -60,6 +58,8 @@ public class RadarView extends View {
     private RectF outerRect, midRect, innerRect;
     private Rect labelBounds, labelBackground;
     private int centerX, centerY, radius;
+    float prevAngle = 0;
+
 
     public RadarView(Context context) {
         this(context, null);
@@ -76,6 +76,21 @@ public class RadarView extends View {
         init();
     }
 
+    private int calcHourAngle(){
+        return (int) (hour / 24. * 360);
+    }
+
+    private double calcMinuteAngle(){
+        //System.out.println("minute: " + minute / 60. * 360+ " , seconds: " + calcSecondAngle() / 360 + ", result " +
+        //        "= " + (minute /  60. * 360 + second / 60000.));
+        return  (minute /  60. * 360 + second / 60000.);
+    }
+
+    private double calcSecondAngle(){
+        //System.out.println(second / 60000. * 360);
+        return  (second / 60000. * 360);
+    }
+
     private void init() {
         if (!init) {
 
@@ -84,6 +99,7 @@ public class RadarView extends View {
             hour = time.getHours();
             minute = time.getMinutes();
             second = time.getSeconds();
+
 
             //light vertical and horizontal lines
             radarMapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -127,12 +143,31 @@ public class RadarView extends View {
             labelBackground = new Rect();
 
         }
+
+        //update time
+        new Thread(() -> {
+            while(true) {
+                Calendar c = Calendar.getInstance();
+                Date time = c.getTime();
+                hour = time.getHours();
+                minute = time.getMinutes();
+                second = c.getTimeInMillis() % (1000 * 60);
+                //System.out.println("minute: " + minute);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
         //seconds
         new Thread(() -> {
             while (true) {
-                this.currentAngleSecond = this.currentAngleSecond  + 1 % 360;
+                this.currentAngleSecond = (float) calcSecondAngle();
+                //System.out.println("second recalculated: " + this.currentAngleSecond);
                 try {
-                    Thread.sleep(35);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -142,9 +177,10 @@ public class RadarView extends View {
         //minutes
         new Thread(() -> {
             while (true) {
-                this.currentAngleMinute = this.currentAngleMinute + 1 % 360;
+                this.currentAngleMinute = (float) calcMinuteAngle();
+                //System.out.println("minutes recalculated: " + this.currentAngleMinute);
                 try {
-                    Thread.sleep(55);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -154,9 +190,10 @@ public class RadarView extends View {
         //hours
         new Thread(() -> {
             while (true) {
-                this.currentAngleHour = this.currentAngleHour + 1 % 360;
+                this.currentAngleHour = calcHourAngle();
+                //System.out.println("hours recalculated: " + this.currentAngleHour);
                 try {
-                    Thread.sleep(75);
+                    Thread.sleep(400);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -207,19 +244,19 @@ public class RadarView extends View {
 
             midGradient = new SweepGradient(centerX, centerY, midColors, positions);
             midMatrix = new Matrix();
-            midMatrix.preRotate(270f, centerX, centerY);
+            midMatrix.preRotate(sweepAngle + 180, centerX, centerY);
             midGradient.setLocalMatrix(midMatrix);
             midPaint.setShader(midGradient);
 
             innerGradient = new SweepGradient(centerX, centerY, innerColors, positions);
             innerMatrix = new Matrix();
-            innerMatrix.preRotate(270f, centerX, centerY);
+            innerMatrix.preRotate(sweepAngle + 180, centerX, centerY);
             innerGradient.setLocalMatrix(innerMatrix);
             innerPaint.setShader(innerGradient);
 
             outerGradient = new SweepGradient(centerX, centerY, outerColors, positions);
             outerMatrix = new Matrix();
-            outerMatrix.preRotate(270f, centerX, centerY);
+            outerMatrix.preRotate(sweepAngle + 180, centerX, centerY);
             outerGradient.setLocalMatrix(outerMatrix);
             outerPaint.setShader(outerGradient);
 
@@ -321,24 +358,32 @@ public class RadarView extends View {
         canvas.drawText(labels[4],  centerX - labelBounds.width() / 2
                 , base + height * 7 / 6, labelsPaint);
 
-
+        int addAngle = 180;
         //outer arc
-        outerMatrix.preRotate(currentAngleMinute, centerX, centerY);
+        System.out.println("actual minute angle: " + currentAngleMinute);
+        outerMatrix.preRotate(currentAngleMinute + addAngle, centerX, centerY);
         outerGradient.setLocalMatrix(outerMatrix);
-        canvas.drawArc(outerRect, currentAngleMinute, sweepAngle, false, outerPaint);
-        outerMatrix.preRotate(-currentAngleMinute, centerX, centerY);
+        canvas.drawArc(outerRect, currentAngleMinute + addAngle, sweepAngle, false, outerPaint);
+        outerMatrix.preRotate(-currentAngleMinute - addAngle, centerX, centerY);
 
+
+        if(Math.abs(currentAngleSecond - prevAngle) > 10){
+            System.out.println("prev: " + prevAngle+ ", now: " + currentAngleSecond);
+        }
         //mid arc
-        midMatrix.preRotate(currentAngleSecond, centerX, centerY);
+        System.out.println("seconds " + currentAngleSecond);
+        midMatrix.preRotate(currentAngleSecond + addAngle, centerX, centerY);
         midGradient.setLocalMatrix(midMatrix);
-        canvas.drawArc(midRect, currentAngleSecond, sweepAngle, false, midPaint);
-        midMatrix.preRotate(-currentAngleSecond, centerX, centerY);
+        canvas.drawArc(midRect, currentAngleSecond + addAngle, sweepAngle, false, midPaint);
+        midMatrix.preRotate(-currentAngleSecond - addAngle, centerX, centerY);
+        prevAngle = currentAngleSecond;
+
 
         //inner arc
-        innerMatrix.preRotate(currentAngleHour, centerX, centerY);
+        innerMatrix.preRotate(currentAngleHour + addAngle, centerX, centerY);
         innerGradient.setLocalMatrix(innerMatrix);
-        canvas.drawArc(innerRect, currentAngleHour, sweepAngle, false, innerPaint);
-        innerMatrix.preRotate(-currentAngleHour, centerX, centerY);
+        canvas.drawArc(innerRect, currentAngleHour + addAngle, sweepAngle, false, innerPaint);
+        innerMatrix.preRotate(-currentAngleHour - addAngle, centerX, centerY);
 
     }
 
