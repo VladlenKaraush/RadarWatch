@@ -17,7 +17,8 @@ public class RadarView extends View {
     private float currentAngleSecond = 90;
     private float currentAngleMinute = 90;
     private float currentAngleHour = 90;
-    private int circleEdgeOffset = 4;
+    private int outerCircleOffset = 4;
+    private int sweepAngle = 70;
 
     //first two bytes for opacity (00 is transparent)
     private int color1 = 0x00FF3333;
@@ -37,12 +38,10 @@ public class RadarView extends View {
 
     //positions to change colors in midGradient
     float[] positions = {0.33f, 0.47f};
+    float[] newPositions = {0.1f, 0.7f};
     boolean init = false;
     Matrix midMatrix, innerMatrix, outerMatrix;
     Shader midGradient, outerGradient, innerGradient;
-
-    int canvasX, canvasY;
-
     private static final int STROKE_WIDTH = 70;
     private static final int INNER_STROKE_WIDTH = 50;
     private Paint innerPaint, outerPaint, whitePaint, midPaint, radarMapPaint, radarCirclesPaint;
@@ -71,7 +70,7 @@ public class RadarView extends View {
             radarMapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             radarMapPaint.setStyle(Paint.Style.STROKE);
             radarMapPaint.setStrokeWidth(4);
-            radarMapPaint.setColor(Color.rgb(255, 130, 130));
+            radarMapPaint.setColor(Color.rgb(255, 100, 100));
 
             //black circles
             radarCirclesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -102,8 +101,7 @@ public class RadarView extends View {
         //seconds
         new Thread(() -> {
             while (true) {
-                this.currentAngleSecond += 1;
-                this.currentAngleSecond = this.currentAngleSecond % 360;
+                this.currentAngleSecond = this.currentAngleSecond  + 1 % 360;
                 try {
                     Thread.sleep(35);
                 } catch (InterruptedException e) {
@@ -115,8 +113,7 @@ public class RadarView extends View {
         //minutes
         new Thread(() -> {
             while (true) {
-                this.currentAngleMinute += 1;
-                this.currentAngleMinute = this.currentAngleMinute % 360;
+                this.currentAngleMinute = this.currentAngleMinute + 1 % 360;
                 try {
                     Thread.sleep(55);
                 } catch (InterruptedException e) {
@@ -128,8 +125,7 @@ public class RadarView extends View {
         //hours
         new Thread(() -> {
             while (true) {
-                this.currentAngleHour += 1;
-                this.currentAngleHour = this.currentAngleHour % 360;
+                this.currentAngleHour = this.currentAngleHour + 1 % 360;
                 try {
                     Thread.sleep(75);
                 } catch (InterruptedException e) {
@@ -149,9 +145,9 @@ public class RadarView extends View {
             centerX = getMeasuredWidth() / 2;
             centerY = getMeasuredHeight() / 2;
             radius = Math.min(centerX, centerY);
+            System.out.println("x = " + centerX + ", Y = " + centerY);
 
-
-            int startTop = STROKE_WIDTH / 2;
+            int startTop = STROKE_WIDTH / 2 + outerCircleOffset;
             int startLeft = startTop;
 
             int endBottom = 2 * (radius) - startTop;
@@ -162,17 +158,20 @@ public class RadarView extends View {
             centerX = (int) outerRect.centerX();
             centerY = (int) outerRect.centerY();
 
-            startLeft += STROKE_WIDTH;
-            startTop += STROKE_WIDTH;
-            endBottom -= STROKE_WIDTH;
-            endRight -= STROKE_WIDTH;
+            //offset for mid circle
+            startLeft += STROKE_WIDTH + outerCircleOffset;
+            startTop  += STROKE_WIDTH + outerCircleOffset;
+            endBottom -= STROKE_WIDTH + outerCircleOffset;
+            endRight  -= STROKE_WIDTH + outerCircleOffset;
 
             midRect = new RectF(startLeft, startTop, endRight, endBottom);
 
-            startLeft += STROKE_WIDTH;
-            startTop += STROKE_WIDTH;
-            endBottom -= STROKE_WIDTH;
-            endRight -= STROKE_WIDTH;
+            //offset for inner circle
+            int diff = (STROKE_WIDTH - INNER_STROKE_WIDTH) / 2;
+            startLeft += STROKE_WIDTH + outerCircleOffset - diff;
+            startTop  += STROKE_WIDTH + outerCircleOffset - diff;
+            endBottom -= STROKE_WIDTH + outerCircleOffset - diff;
+            endRight  -= STROKE_WIDTH + outerCircleOffset - diff;
             innerRect = new RectF(startLeft, startTop, endRight, endBottom);
 
 
@@ -197,45 +196,42 @@ public class RadarView extends View {
         }
 
         invalidate();
-
-
-        //draw black circles between arcs
-        /*
-        canvas.drawCircle(centerX, centerY, centerX / 4, radarCirclesPaint);
-        canvas.drawCircle(centerX, centerY, centerX / 3, radarCirclesPaint);
-        canvas.drawCircle(centerX, centerY, centerX / 2, radarCirclesPaint);
-        canvas.drawCircle(centerX, centerY, (float) (centerX / 1.3), radarCirclesPaint);
-        */
         //draw light lines across all view through the center
 
-        int midOffset = 50;
+        int midCircleRadius = 50;
         //horizontal line
-        canvas.drawLine(0, centerY, centerX  - midOffset, centerY, radarMapPaint);
-        canvas.drawLine(centerX + midOffset, centerY, centerX * 2, centerY, radarMapPaint);
+        canvas.drawLine(0, centerY, centerX  - midCircleRadius, centerY, radarMapPaint);
+        canvas.drawLine(centerX + midCircleRadius, centerY, centerX * 2, centerY, radarMapPaint);
 
         //vertical line
-        canvas.drawLine(centerX, 0, centerX, centerY  - midOffset, radarMapPaint);
-        canvas.drawLine(centerX, centerY + midOffset, centerX, centerY  * 2, radarMapPaint);
+        canvas.drawLine(centerX, 0, centerX, centerY  - midCircleRadius, radarMapPaint);
+        canvas.drawLine(centerX, centerY + midCircleRadius, centerX, centerY  * 2, radarMapPaint);
 
         //light mid circle
-        canvas.drawCircle(centerX, centerY, midOffset, radarMapPaint);
+        canvas.drawCircle(centerX, centerY, midCircleRadius, radarMapPaint);
+
+        //draw black circles between arcs
+        canvas.drawCircle(centerX, centerY, centerX - outerCircleOffset / 2, radarCirclesPaint);
+        canvas.drawCircle(centerX, centerY, centerX - outerCircleOffset * 3 / 2 - STROKE_WIDTH, radarCirclesPaint);
+        canvas.drawCircle(centerX, centerY, centerX - outerCircleOffset * 5 / 2 - STROKE_WIDTH * 2, radarCirclesPaint);
+
 
         //outer arc
         outerMatrix.preRotate(currentAngleMinute, centerX, centerY);
         outerGradient.setLocalMatrix(outerMatrix);
-        canvas.drawArc(outerRect, currentAngleMinute, 90, false, outerPaint);
+        canvas.drawArc(outerRect, currentAngleMinute, sweepAngle, false, outerPaint);
         outerMatrix.preRotate(-currentAngleMinute, centerX, centerY);
 
         //mid arc
         midMatrix.preRotate(currentAngleSecond, centerX, centerY);
         midGradient.setLocalMatrix(midMatrix);
-        canvas.drawArc(midRect, currentAngleSecond, 90, false, midPaint);
+        canvas.drawArc(midRect, currentAngleSecond, sweepAngle, false, midPaint);
         midMatrix.preRotate(-currentAngleSecond, centerX, centerY);
 
         //inner arc
         innerMatrix.preRotate(currentAngleHour, centerX, centerY);
         innerGradient.setLocalMatrix(innerMatrix);
-        canvas.drawArc(innerRect, currentAngleHour, 90, false, innerPaint);
+        canvas.drawArc(innerRect, currentAngleHour, sweepAngle, false, innerPaint);
         innerMatrix.preRotate(-currentAngleHour, centerX, centerY);
 
 
