@@ -5,47 +5,60 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
-import android.support.v4.content.ContextCompat;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.sql.Time;
+import java.time.LocalTime;
+import java.util.Calendar;
+import java.util.Date;
+
 public class RadarView extends View {
 
-    private float currentAngleSecond = 90;
+    private float currentAngleSecond = 0;
     private float currentAngleMinute = 90;
-    private float currentAngleHour = 90;
-    private int outerCircleOffset = 4;
-    private int sweepAngle = 70;
+    private float currentAngleHour = 180;
+    private final int outerCircleOffset = 4;
+    private final int sweepAngle = 70;
+    private final int labelSize = 13;
+    private int midCircleRadius = 50;
+    private int hour, minute, second;
+    private final String[] labels = {
+            "12", "60", "9", "45", "30", "6", "15", "3"
+    };
 
     //first two bytes for opacity (00 is transparent)
-    private int color1 = 0x00FF3333;
-    private int color2 = 0xFFFF3333;
-    int[] outerColors = {
+    private final int color1 = 0x00Fa4040;
+    private final int color2 = 0xFFFa4040;
+    final int[] outerColors = {
             color1,
             color2,
     };
-    int[] midColors = {
+    final int[] midColors = {
             color1,
             color2,
     };
-    int[] innerColors = {
+    final int[] innerColors = {
             color1,
             color2,
     };
 
     //positions to change colors in midGradient
-    float[] positions = {0.33f, 0.47f};
+    final float[] positions = {0.33f, 0.47f};
     float[] newPositions = {0.1f, 0.7f};
     boolean init = false;
     Matrix midMatrix, innerMatrix, outerMatrix;
     Shader midGradient, outerGradient, innerGradient;
     private static final int STROKE_WIDTH = 70;
-    private static final int INNER_STROKE_WIDTH = 50;
-    private Paint innerPaint, outerPaint, whitePaint, midPaint, radarMapPaint, radarCirclesPaint;
+    private static final int INNER_STROKE_WIDTH = 35;
+    private Paint innerPaint, outerPaint, labelsPaint, midPaint, radarMapPaint, radarCirclesPaint, labelsBackgroundPaint;
     private RectF outerRect, midRect, innerRect;
+    private Rect labelBounds, labelBackground;
     private int centerX, centerY, radius;
 
     public RadarView(Context context) {
@@ -66,26 +79,33 @@ public class RadarView extends View {
     private void init() {
         if (!init) {
 
+            //current time
+            Date time = Calendar.getInstance().getTime();
+            hour = time.getHours();
+            minute = time.getMinutes();
+            second = time.getSeconds();
+
             //light vertical and horizontal lines
             radarMapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             radarMapPaint.setStyle(Paint.Style.STROKE);
             radarMapPaint.setStrokeWidth(4);
-            radarMapPaint.setColor(Color.rgb(255, 100, 100));
+            radarMapPaint.setColor(Color.rgb(255, 85, 85));
 
             //black circles
             radarCirclesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             radarCirclesPaint.setStyle(Paint.Style.STROKE);
             radarCirclesPaint.setStrokeWidth(4);
-            radarCirclesPaint.setColor(Color.BLACK);
+            radarCirclesPaint.setColor(Color.rgb(40,40,40));
 
             //mid arc
             midPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             midPaint.setStyle(Paint.Style.STROKE);
             midPaint.setStrokeWidth(STROKE_WIDTH);
 
-            whitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            whitePaint.setColor(ContextCompat.getColor(getContext(), R.color.white));
-            whitePaint.setStyle(Paint.Style.FILL);
+            labelsPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            labelsPaint.setColor(Color.rgb(255, 85, 85));
+            labelsPaint.setStyle(Paint.Style.FILL);
+            labelsPaint.setTextSize(labelSize * getResources().getDisplayMetrics().density);
 
             //inner arc
             innerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -97,6 +117,15 @@ public class RadarView extends View {
             outerPaint.setStyle(Paint.Style.STROKE);
             outerPaint.setStrokeWidth(STROKE_WIDTH);
             init = true;
+
+            //background for numbers
+            labelsBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            labelsBackgroundPaint.setColor(Color.rgb(80, 40, 40));
+            labelsBackgroundPaint.setStyle(Paint.Style.FILL);
+
+            labelBounds = new Rect();
+            labelBackground = new Rect();
+
         }
         //seconds
         new Thread(() -> {
@@ -136,12 +165,13 @@ public class RadarView extends View {
 
     }
 
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         if (outerRect == null) {
-
+            System.out.println("init onDraw");
             centerX = getMeasuredWidth() / 2;
             centerY = getMeasuredHeight() / 2;
             radius = Math.min(centerX, centerY);
@@ -198,7 +228,7 @@ public class RadarView extends View {
         invalidate();
         //draw light lines across all view through the center
 
-        int midCircleRadius = 50;
+
         //horizontal line
         canvas.drawLine(0, centerY, centerX  - midCircleRadius, centerY, radarMapPaint);
         canvas.drawLine(centerX + midCircleRadius, centerY, centerX * 2, centerY, radarMapPaint);
@@ -210,10 +240,86 @@ public class RadarView extends View {
         //light mid circle
         canvas.drawCircle(centerX, centerY, midCircleRadius, radarMapPaint);
 
+
+        //number labels
+
+        //left labels
+        labelsPaint.getTextBounds(labels[2], 0, labels[2].length(), labelBounds);
+        int height = labelBounds.height();
+        int width = labelBounds.width();
+        int base = STROKE_WIDTH / 2 + outerCircleOffset - width;
+        //draw background for label
+        labelBackground.set(base, centerY - height / 2,base + 2 * width, centerY + height / 2);
+        canvas.drawRect(labelBackground, labelsBackgroundPaint);
+        canvas.drawText(labels[2], base + width / 2, centerY + height / 2, labelsPaint);
+
+        labelsPaint.getTextBounds(labels[3], 0, labels[3].length(), labelBounds);
+        height = labelBounds.height();
+        width = labelBounds.width();
+        base = STROKE_WIDTH * 3 / 2 + 2 * outerCircleOffset - width *  2 / 3;
+        //draw background for label
+        labelBackground.set(base, centerY - height / 2, base + width * 4 / 3, centerY + height / 2);
+        canvas.drawRect(labelBackground, labelsBackgroundPaint);
+        canvas.drawText(labels[3], base + width / 6, centerY + height / 2, labelsPaint);
+
+
+        //top labels
+        labelsPaint.getTextBounds(labels[0], 0, labels[0].length(), labelBounds);
+        height = labelBounds.height();
+        width = labelBounds.width();
+        base = outerCircleOffset + STROKE_WIDTH / 2 - height * 2 / 3;
+        labelBackground.set(centerX - width / 2, base,centerX + width / 2, base + height * 4 / 3);
+        canvas.drawRect(labelBackground, labelsBackgroundPaint);
+        canvas.drawText(labels[0],  centerX - labelBounds.width() / 2,base + height * 7/6, labelsPaint);
+
+        labelsPaint.getTextBounds(labels[1], 0, labels[1].length(), labelBounds);
+        height = labelBounds.height();
+        width = labelBounds.width();
+        base = outerCircleOffset * 2 + STROKE_WIDTH * 3 / 2 - height * 2 / 3;
+        labelBackground.set(centerX - width / 2,base,centerX + width / 2, base + height * 4 / 3);
+        canvas.drawRect(labelBackground, labelsBackgroundPaint);
+        canvas.drawText(labels[1],  centerX - labelBounds.width() / 2,base + height * 7 / 6, labelsPaint);
+
+        //right labels
+        labelsPaint.getTextBounds(labels[7], 0, labels[7].length(), labelBounds);
+        height = labelBounds.height();
+        width = labelBounds.width();
+        base = centerX * 2 - (STROKE_WIDTH / 2 + outerCircleOffset + width );
+        labelBackground.set(base, centerY - height / 2,base + width * 2, centerY + height / 2);
+        canvas.drawRect(labelBackground, labelsBackgroundPaint);
+        canvas.drawText(labels[7],  base + width / 2, centerY + height / 2, labelsPaint);
+
+        labelsPaint.getTextBounds(labels[6], 0, labels[6].length(), labelBounds);
+        width = labelBounds.width();
+        height = labelBounds.height();
+        base = centerX * 2 - (STROKE_WIDTH * 3 / 2 + 2 * outerCircleOffset + width * 2/ 3);
+        labelBackground.set(base, centerY - height / 2,base + width * 4 / 3, centerY + height / 2);
+        canvas.drawRect(labelBackground, labelsBackgroundPaint);
+        canvas.drawText(labels[6],  base + width /12, centerY + height / 2, labelsPaint);
+
         //draw black circles between arcs
         canvas.drawCircle(centerX, centerY, centerX - outerCircleOffset / 2, radarCirclesPaint);
         canvas.drawCircle(centerX, centerY, centerX - outerCircleOffset * 3 / 2 - STROKE_WIDTH, radarCirclesPaint);
         canvas.drawCircle(centerX, centerY, centerX - outerCircleOffset * 5 / 2 - STROKE_WIDTH * 2, radarCirclesPaint);
+
+        //bottom labels
+        labelsPaint.getTextBounds(labels[5], 0, labels[5].length(), labelBounds);
+        height = labelBounds.height();
+        width = labelBounds.width();
+        base =  centerX * 2 - (outerCircleOffset + STROKE_WIDTH / 2 + height * 2 / 3);
+        labelBackground.set(centerX - width / 2, base,centerX + width / 2, base + height * 4 / 3);
+        canvas.drawRect(labelBackground, labelsBackgroundPaint);
+        canvas.drawText(labels[5],  centerX - labelBounds.width() / 2
+                , base + height * 7 / 6, labelsPaint);
+
+        labelsPaint.getTextBounds(labels[4], 0, labels[4].length(), labelBounds);
+        height = labelBounds.height();
+        width = labelBounds.width();
+        base = centerX * 2 - (outerCircleOffset * 2 + STROKE_WIDTH *  3 / 2 + height * 2 / 3);
+        labelBackground.set(centerX - width / 2, base,centerX + width / 2, base + height * 4 / 3);
+        canvas.drawRect(labelBackground, labelsBackgroundPaint);
+        canvas.drawText(labels[4],  centerX - labelBounds.width() / 2
+                , base + height * 7 / 6, labelsPaint);
 
 
         //outer arc
@@ -233,7 +339,6 @@ public class RadarView extends View {
         innerGradient.setLocalMatrix(innerMatrix);
         canvas.drawArc(innerRect, currentAngleHour, sweepAngle, false, innerPaint);
         innerMatrix.preRotate(-currentAngleHour, centerX, centerY);
-
 
     }
 
