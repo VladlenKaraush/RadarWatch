@@ -21,7 +21,7 @@ public class RadarView extends View {
     private float currentAngleSecond = 0;
     private float currentAngleMinute = 0;
     private float currentAngleHour = 0;
-    private final int outerCircleOffset = 4;
+    private int outerCircleOffset = 3;
     private final int sweepAngle = 90;
     private final int labelSize = 13;
     private int midCircleRadius = 50;
@@ -52,8 +52,8 @@ public class RadarView extends View {
     boolean init = false;
     Matrix midMatrix, innerMatrix, outerMatrix;
     Shader midGradient, outerGradient, innerGradient;
-    private static final int STROKE_WIDTH = 70;
-    private static final int INNER_STROKE_WIDTH = 35;
+    private static int STROKE_WIDTH = 70;
+    private static int INNER_STROKE_WIDTH = 35;
     private Paint innerPaint, outerPaint, labelsPaint, midPaint, radarMapPaint, radarCirclesPaint, labelsBackgroundPaint;
     private RectF outerRect, midRect, innerRect;
     private Rect labelBounds, labelBackground;
@@ -81,13 +81,10 @@ public class RadarView extends View {
     }
 
     private double calcMinuteAngle(){
-        //System.out.println("minute: " + minute / 60. * 360+ " , seconds: " + calcSecondAngle() / 360 + ", result " +
-        //        "= " + (minute /  60. * 360 + second / 60000.));
         return  (minute /  60. * 360 + second / 60000.);
     }
 
     private double calcSecondAngle(){
-        //System.out.println(second / 60000. * 360);
         return  (second / 60000. * 360);
     }
 
@@ -104,13 +101,13 @@ public class RadarView extends View {
             //light vertical and horizontal lines
             radarMapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             radarMapPaint.setStyle(Paint.Style.STROKE);
-            radarMapPaint.setStrokeWidth(4);
+            radarMapPaint.setStrokeWidth(3);
             radarMapPaint.setColor(Color.rgb(255, 85, 85));
 
             //black circles
             radarCirclesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             radarCirclesPaint.setStyle(Paint.Style.STROKE);
-            radarCirclesPaint.setStrokeWidth(4);
+            radarCirclesPaint.setStrokeWidth(3);
             radarCirclesPaint.setColor(Color.rgb(40,40,40));
 
             //mid arc
@@ -214,6 +211,11 @@ public class RadarView extends View {
             radius = Math.min(centerX, centerY);
             System.out.println("x = " + centerX + ", Y = " + centerY);
 
+            //set sizes
+            STROKE_WIDTH = (int) (70 / 265. * radius);
+            INNER_STROKE_WIDTH = (int) (35 / 265. * radius);
+            midCircleRadius = (int) (50 / 265. * radius);
+
             int startTop = STROKE_WIDTH / 2 + outerCircleOffset;
             int startLeft = startTop;
 
@@ -279,7 +281,7 @@ public class RadarView extends View {
 
 
         //number labels
-
+        System.out.println("sizes: " + STROKE_WIDTH + " " + INNER_STROKE_WIDTH);
         //left labels
         labelsPaint.getTextBounds(labels[2], 0, labels[2].length(), labelBounds);
         int height = labelBounds.height();
@@ -360,7 +362,7 @@ public class RadarView extends View {
 
         int addAngle = 180;
         //outer arc
-        System.out.println("actual minute angle: " + currentAngleMinute);
+        //System.out.println("actual minute angle: " + currentAngleMinute);
         outerMatrix.preRotate(currentAngleMinute + addAngle, centerX, centerY);
         outerGradient.setLocalMatrix(outerMatrix);
         canvas.drawArc(outerRect, currentAngleMinute + addAngle, sweepAngle, false, outerPaint);
@@ -371,7 +373,7 @@ public class RadarView extends View {
             System.out.println("prev: " + prevAngle+ ", now: " + currentAngleSecond);
         }
         //mid arc
-        System.out.println("seconds " + currentAngleSecond);
+        //System.out.println("seconds " + currentAngleSecond);
         midMatrix.preRotate(currentAngleSecond + addAngle, centerX, centerY);
         midGradient.setLocalMatrix(midMatrix);
         canvas.drawArc(midRect, currentAngleSecond + addAngle, sweepAngle, false, midPaint);
