@@ -48,7 +48,6 @@ public class RadarView extends View {
 
     //positions to change colors in midGradient
     final float[] positions = {0.33f, 0.47f};
-    float[] newPositions = {0.1f, 0.7f};
     boolean init = false;
     Matrix midMatrix, innerMatrix, outerMatrix;
     Shader midGradient, outerGradient, innerGradient;
