@@ -14,8 +14,9 @@ public class RadarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_radar);
         ConstraintLayout constraintLayout = findViewById(R.id.view);
-        radarView = findViewById(R.id.radarView);
+        //radarView = findViewById(R.id.radarView);
 
         constraintLayout.setBackgroundColor(Color.rgb(80,40, 40));
     }
+
 }

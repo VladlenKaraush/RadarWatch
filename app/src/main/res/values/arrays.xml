@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="color_schemes">
+        <item>red</item>
+        <item>blue</item>
+        <item>green</item>
+    </string-array>
+    <string-array
+        name="array1">
+        <item>red</item>
+        <item>blue</item>
+        <item>green</item>
+    </string-array>
+    <string-array
+        name="array2">
+        <item>red</item>
+        <item>blue</item>
+        <item>green</item>
+    </string-array>
+</resources>
