@@ -76,6 +76,7 @@ public class RadarView extends View {
     }
 
 
+
     private int calcHourAngle(){
         //System.out.println("hour = " + hour + ", angle = " + (int) (hour / 24. * 360));
         return (int) (hour / 12. * 360);

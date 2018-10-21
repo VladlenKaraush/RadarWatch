@@ -2,19 +2,7 @@
 <resources>
     <string-array
         name="color_schemes">
-        <item>red</item>
-        <item>blue</item>
-        <item>green</item>
-    </string-array>
-    <string-array
-        name="array1">
-        <item>red</item>
-        <item>blue</item>
-        <item>green</item>
-    </string-array>
-    <string-array
-        name="array2">
-        <item>red</item>
+        <item>red(default)</item>
         <item>blue</item>
         <item>green</item>
     </string-array>
