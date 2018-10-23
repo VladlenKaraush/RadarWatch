@@ -15,6 +15,42 @@ import android.view.View;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+enum Colors{
+    RADAR_MAP_COLOR, LABELS_COLOR, BACKGROUND_COLOR, RADAR_CIRCLES_COLOR, ARC_COLOR, ARC_FADEOUT_COLOR
+}
+
+class ColorScheme{
+
+    static HashMap<Colors, Integer> redScheme, greenScheme, blueScheme;
+    static{
+        redScheme = new HashMap<>();
+        redScheme.put(Colors.RADAR_MAP_COLOR, Color.rgb(255, 85, 85));
+        redScheme.put(Colors.LABELS_COLOR, Color.rgb(255, 85, 85));
+        redScheme.put(Colors.BACKGROUND_COLOR, Color.rgb(80, 40, 40));
+        redScheme.put(Colors.RADAR_CIRCLES_COLOR, Color.rgb(40, 40, 40));
+        redScheme.put(Colors.ARC_COLOR, Color.argb(255,250, 64, 64));
+        redScheme.put(Colors.ARC_FADEOUT_COLOR, Color.argb(0,250, 64, 64));
+
+        greenScheme = new HashMap<>();
+        greenScheme.put(Colors.RADAR_MAP_COLOR, Color.rgb(85, 255, 85));
+        greenScheme.put(Colors.LABELS_COLOR, Color.rgb(85, 255, 85));
+        greenScheme.put(Colors.BACKGROUND_COLOR, Color.rgb(40, 80, 40));
+        greenScheme.put(Colors.RADAR_CIRCLES_COLOR, Color.rgb(40, 40, 40));
+        greenScheme.put(Colors.ARC_COLOR, Color.argb(255,64, 250, 64));
+        greenScheme.put(Colors.ARC_FADEOUT_COLOR, Color.argb(0,64, 250, 64));
+
+        blueScheme = new HashMap<>();
+        blueScheme.put(Colors.RADAR_MAP_COLOR, Color.rgb(85, 85, 255));
+        blueScheme.put(Colors.LABELS_COLOR, Color.rgb(85, 85, 255));
+        blueScheme.put(Colors.BACKGROUND_COLOR, Color.rgb(40, 40, 80));
+        blueScheme.put(Colors.RADAR_CIRCLES_COLOR, Color.rgb(40, 40, 40));
+        blueScheme.put(Colors.ARC_COLOR, Color.argb(255,65, 64, 250));
+        blueScheme.put(Colors.ARC_FADEOUT_COLOR, Color.argb(0,64, 64, 250));
+    }
+}
 
 public class RadarView extends View {
 
@@ -26,13 +62,16 @@ public class RadarView extends View {
     private final int labelSize = 13;
     private int midCircleRadius = 50;
     private double hour, minute, second;
+    static int currentSchemeId = 0;
     private final String[] labels = {
             "12", "60", "9", "45", "30", "6", "15", "3", "0"
     };
 
     //first two bytes for opacity (00 is transparent)
-    private final int color1 = 0x00Fa4040;
-    private final int color2 = 0xFFFa4040;
+//    private final int color1 = 0x00Fa4040;
+//    private final int color2 = 0xFFFa4040;
+    private int color1 = colorScheme.get(Colors.ARC_FADEOUT_COLOR);
+    private int color2 = colorScheme.get(Colors.ARC_COLOR);
     final int[] outerColors = {
             color1,
             color2,
@@ -57,6 +96,7 @@ public class RadarView extends View {
     private RectF outerRect, midRect, innerRect;
     private Rect labelBounds, labelBackground;
     private int centerX, centerY, radius;
+    private static Map<Colors, Integer> colorScheme = ColorScheme.redScheme;
     float prevAngle = 0;
 
 
@@ -75,7 +115,22 @@ public class RadarView extends View {
         init();
     }
 
+    public static int getColorSchemeId(){
+        return currentSchemeId;
+    }
 
+    public static void setColorScheme(int ind){
+        currentSchemeId = ind;
+        if( ind == 0){
+            colorScheme = ColorScheme.redScheme;
+        }
+        else if(ind == 2){
+            colorScheme = ColorScheme.greenScheme;
+        }
+        else{
+            colorScheme = ColorScheme.blueScheme;
+        }
+    }
 
     private int calcHourAngle(){
         //System.out.println("hour = " + hour + ", angle = " + (int) (hour / 24. * 360));
@@ -90,6 +145,10 @@ public class RadarView extends View {
         return  (second / 60000. * 360);
     }
 
+    static int getBackgroundColor(){
+        return colorScheme.get(Colors.BACKGROUND_COLOR);
+    }
+
     private void init() {
         if (!init) {
 
@@ -100,17 +159,18 @@ public class RadarView extends View {
             second = time.getSeconds();
 
 
+
             //light vertical and horizontal lines
             radarMapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             radarMapPaint.setStyle(Paint.Style.STROKE);
             radarMapPaint.setStrokeWidth(3);
-            radarMapPaint.setColor(Color.rgb(255, 85, 85));
+            radarMapPaint.setColor(colorScheme.get(Colors.RADAR_MAP_COLOR));
 
             //black circles
             radarCirclesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             radarCirclesPaint.setStyle(Paint.Style.STROKE);
             radarCirclesPaint.setStrokeWidth(3);
-            radarCirclesPaint.setColor(Color.rgb(40,40,40));
+            radarCirclesPaint.setColor(colorScheme.get(Colors.RADAR_CIRCLES_COLOR));
 
             //mid arc
             midPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -118,7 +178,7 @@ public class RadarView extends View {
             midPaint.setStrokeWidth(STROKE_WIDTH);
 
             labelsPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-            labelsPaint.setColor(Color.rgb(255, 85, 85));
+            labelsPaint.setColor(colorScheme.get(Colors.LABELS_COLOR));
             labelsPaint.setStyle(Paint.Style.FILL);
             labelsPaint.setTextSize(labelSize * getResources().getDisplayMetrics().density);
 
@@ -135,7 +195,7 @@ public class RadarView extends View {
 
             //background for numbers
             labelsBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            labelsBackgroundPaint.setColor(Color.rgb(80, 40, 40));
+            labelsBackgroundPaint.setColor(colorScheme.get(Colors.BACKGROUND_COLOR));
             labelsBackgroundPaint.setStyle(Paint.Style.FILL);
 
             labelBounds = new Rect();

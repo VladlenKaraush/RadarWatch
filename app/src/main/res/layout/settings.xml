@@ -9,22 +9,20 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/te"
         android:layout_width="384dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="52dp"
         android:background="?attr/colorPrimary"
-        android:contentDescription="@string/settings"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:theme="@style/ToolBarStyle">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/preferences"
             android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="@+id/te"

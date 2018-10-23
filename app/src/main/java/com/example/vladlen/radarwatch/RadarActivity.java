@@ -5,6 +5,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -12,7 +13,7 @@ public class RadarActivity extends AppCompatActivity {
 
     RadarView radarView = null;
     SettingsView settingsView = null;
-    boolean isSettingsView = false;
+    boolean isSettingsView = false, isDigitalClock = false;
 
 
 
@@ -27,7 +28,7 @@ public class RadarActivity extends AppCompatActivity {
         ConstraintLayout constraintLayout = findViewById(R.id.view);
         //radarView = findViewById(R.id.radarView);
 
-        constraintLayout.setBackgroundColor(Color.rgb(80,40, 40));
+        constraintLayout.setBackgroundColor(RadarView.getBackgroundColor());
     }
 
 
@@ -46,6 +47,25 @@ public class RadarActivity extends AppCompatActivity {
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
+        spinner.setSelection(RadarView.getColorSchemeId(), false);
+
+        spinner.post(() -> spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                //System.out.println(i);
+                String value = adapterView.getItemAtPosition(i).toString();
+                RadarView.setColorScheme(i);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                System.out.println("nothing");
+            }
+        }));
+
+        //spinner.setOnItemSelectedListener();
+
     }
 
     @Override
@@ -58,4 +78,17 @@ public class RadarActivity extends AppCompatActivity {
 
         super.onBackPressed();
     }
+
+    public void toggleDigitalClock(View view) {
+
+        isDigitalClock = !isDigitalClock;
+
+        if(isDigitalClock){
+            setContentView(R.layout.digital_clock);
+        }
+        else{
+            setupRadarView();
+        }
+    }
+
 }
