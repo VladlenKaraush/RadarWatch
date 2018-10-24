@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">RadarWatch</string>
-    <string name="start">Старт</string>
-    <string name="GoToWebsite">На сайт</string>
-    <string name="SBPSTU">Санкт-Петербургский Политехнический университет Петра Великого</string>
-    <string name="AppliedMathDept">Кафедра прикладной математики</string>
+    <string name="start">Start</string>
+    <string name="GoToWebsite">To website</string>
+    <string name="SBPSTU">Peter the Great St.Petersburg Polytechnic University Политехнический университет Петра Великого</string>
+    <string name="AppliedMathDept">Applied Math Department</string>
     <string name="radarwatch">RadarWatch</string>
     <string name="settings">Settings</string>
     <string name="color_scheme">Color Scheme</string>
