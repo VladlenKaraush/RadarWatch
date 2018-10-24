@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextClock;
 
 public class RadarActivity extends AppCompatActivity {
 
@@ -36,8 +37,8 @@ public class RadarActivity extends AppCompatActivity {
     public void settingsButtonClick(View view) {
 
         setContentView(R.layout.settings);
-        isSettingsView = true;
 
+        isSettingsView = true;
         Spinner spinner = findViewById(R.id.spinner2);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -52,15 +53,12 @@ public class RadarActivity extends AppCompatActivity {
         spinner.post(() -> spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                //System.out.println(i);
-                String value = adapterView.getItemAtPosition(i).toString();
                 RadarView.setColorScheme(i);
 
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                System.out.println("nothing");
             }
         }));
 
@@ -85,6 +83,14 @@ public class RadarActivity extends AppCompatActivity {
 
         if(isDigitalClock){
             setContentView(R.layout.digital_clock);
+
+            //colors
+            ConstraintLayout constraintLayout = findViewById(R.id.clock_view);
+            constraintLayout.setBackgroundColor(RadarView.getBackgroundColor());
+
+            TextClock clock = findViewById(R.id.simpleDigitalClock);
+            clock.setFormat24Hour("hh:mm:ss");
+            clock.setTextColor(RadarView.getArcColor());
         }
         else{
             setupRadarView();

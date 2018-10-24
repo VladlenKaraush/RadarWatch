@@ -118,6 +118,7 @@ public class RadarView extends View {
     public static int getColorSchemeId(){
         return currentSchemeId;
     }
+    public static int getArcColor(){ return colorScheme.get(Colors.ARC_COLOR);}
 
     public static void setColorScheme(int ind){
         currentSchemeId = ind;
