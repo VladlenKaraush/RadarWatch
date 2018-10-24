@@ -10,6 +10,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +28,13 @@ public class MainActivity extends AppCompatActivity {
         departmentName = findViewById(R.id.departmentName);
         universityName = findViewById(R.id.universityName);
         constraintLayout.setBackgroundColor(Color.rgb(0,0, 0));
+
+        //disable button if not connected to internet
+        Button button = findViewById(R.id.onTheSite);
+        if(!isNetworkAvailable()) {
+            button.setBackgroundColor(Color.GRAY);
+            button.setEnabled(false);
+        }
 
     }
 
