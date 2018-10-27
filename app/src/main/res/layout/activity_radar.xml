@@ -5,6 +5,7 @@
     android:id="@+id/view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:onClick="toggleDigitalClock"
     tools:context=".RadarActivity">
 
 
@@ -22,15 +23,17 @@
         app:layout_constraintVertical_bias="0.414" />
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/te"
-        android:layout_width="384dp"
+        android:id="@+id/te_radar"
+        android:layout_width="match_parent"
         android:layout_height="52dp"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:contentInsetStart="0dp"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        android:clipToPadding="false">
 
         <TextView
             android:id="@+id/textView"
@@ -38,11 +41,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:paddingLeft="8dp"
             android:text="@string/radarwatch"
             android:textSize="25sp"
-            app:layout_constraintBottom_toBottomOf="@+id/te"
-            app:layout_constraintStart_toStartOf="@+id/te"
-            app:layout_constraintTop_toTopOf="@+id/te" />
+            app:layout_constraintBottom_toBottomOf="@+id/te_radar"
+            app:layout_constraintStart_toStartOf="@+id/te_radar"
+            app:layout_constraintTop_toTopOf="@+id/te_radar" />
 
     </android.support.v7.widget.Toolbar>
 

@@ -4,7 +4,9 @@ import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -21,15 +23,17 @@ public class RadarActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setupRadarView();
     }
 
     private void setupRadarView(){
         setContentView(R.layout.activity_radar);
         ConstraintLayout constraintLayout = findViewById(R.id.view);
-        //radarView = findViewById(R.id.radarView);
-
         constraintLayout.setBackgroundColor(RadarView.getBackgroundColor());
+
+        Toolbar tb = findViewById(R.id.te_radar);
+        tb.setBackgroundColor(RadarView.getToolbarColor());
     }
 
 
@@ -38,6 +42,8 @@ public class RadarActivity extends AppCompatActivity {
 
         setContentView(R.layout.settings);
 
+        Toolbar tb = findViewById(R.id.te_settings);
+        tb.setBackgroundColor(RadarView.getToolbarColor());
         isSettingsView = true;
         Spinner spinner = findViewById(R.id.spinner2);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -54,6 +60,8 @@ public class RadarActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 RadarView.setColorScheme(i);
+                Toolbar tb = findViewById(R.id.te_settings);
+                tb.setBackgroundColor(RadarView.getToolbarColor());
 
             }
 
@@ -83,6 +91,9 @@ public class RadarActivity extends AppCompatActivity {
 
         if(isDigitalClock){
             setContentView(R.layout.digital_clock);
+
+            Toolbar tb = findViewById(R.id.te_clock);
+            tb.setBackgroundColor(RadarView.getToolbarColor());
 
             //colors
             ConstraintLayout constraintLayout = findViewById(R.id.clock_view);

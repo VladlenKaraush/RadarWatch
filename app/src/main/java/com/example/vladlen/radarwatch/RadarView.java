@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 enum Colors{
-    RADAR_MAP_COLOR, LABELS_COLOR, BACKGROUND_COLOR, RADAR_CIRCLES_COLOR, ARC_COLOR, ARC_FADEOUT_COLOR
+    RADAR_MAP_COLOR, LABELS_COLOR, BACKGROUND_COLOR, RADAR_CIRCLES_COLOR, ARC_COLOR, ARC_FADEOUT_COLOR, TOOLBAR_COLOR
 }
 
 class ColorScheme{
@@ -33,6 +33,7 @@ class ColorScheme{
         redScheme.put(Colors.RADAR_CIRCLES_COLOR, Color.rgb(40, 40, 40));
         redScheme.put(Colors.ARC_COLOR, Color.argb(255,250, 64, 64));
         redScheme.put(Colors.ARC_FADEOUT_COLOR, Color.argb(0,250, 64, 64));
+        redScheme.put(Colors.TOOLBAR_COLOR, Color.argb(255,180, 64, 64));
 
         greenScheme = new HashMap<>();
         greenScheme.put(Colors.RADAR_MAP_COLOR, Color.rgb(85, 255, 85));
@@ -41,6 +42,8 @@ class ColorScheme{
         greenScheme.put(Colors.RADAR_CIRCLES_COLOR, Color.rgb(40, 40, 40));
         greenScheme.put(Colors.ARC_COLOR, Color.argb(255,64, 250, 64));
         greenScheme.put(Colors.ARC_FADEOUT_COLOR, Color.argb(0,64, 250, 64));
+        greenScheme.put(Colors.TOOLBAR_COLOR, Color.argb(255,64, 170, 64));
+
 
         blueScheme = new HashMap<>();
         blueScheme.put(Colors.RADAR_MAP_COLOR, Color.rgb(85, 85, 255));
@@ -49,6 +52,8 @@ class ColorScheme{
         blueScheme.put(Colors.RADAR_CIRCLES_COLOR, Color.rgb(40, 40, 40));
         blueScheme.put(Colors.ARC_COLOR, Color.argb(255,65, 64, 250));
         blueScheme.put(Colors.ARC_FADEOUT_COLOR, Color.argb(0,64, 64, 250));
+        blueScheme.put(Colors.TOOLBAR_COLOR, Color.argb(255,65, 64, 170));
+
     }
 }
 
@@ -148,6 +153,10 @@ public class RadarView extends View {
 
     static int getBackgroundColor(){
         return colorScheme.get(Colors.BACKGROUND_COLOR);
+    }
+
+    static int getToolbarColor(){
+        return colorScheme.get(Colors.TOOLBAR_COLOR);
     }
 
     private void init() {

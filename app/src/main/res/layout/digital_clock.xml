@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/clock_view"
+    android:onClick="toggleDigitalClock"
     xmlns:tools="http://schemas.android.com/tools">
 
 
@@ -23,8 +24,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/te"
-        android:layout_width="384dp"
+        android:id="@+id/te_clock"
+        android:layout_width="match_parent"
         android:layout_height="52dp"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
@@ -41,9 +42,9 @@
             android:layout_marginTop="8dp"
             android:text="@string/radarwatch"
             android:textSize="25sp"
-            app:layout_constraintBottom_toBottomOf="@+id/te"
-            app:layout_constraintStart_toStartOf="@+id/te"
-            app:layout_constraintTop_toTopOf="@+id/te" />
+            app:layout_constraintBottom_toBottomOf="@+id/te_clock"
+            app:layout_constraintStart_toStartOf="@+id/te_clock"
+            app:layout_constraintTop_toTopOf="@+id/te_clock" />
 
     </android.support.v7.widget.Toolbar>
 
