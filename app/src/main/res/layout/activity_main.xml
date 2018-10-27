@@ -79,6 +79,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/universityName"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/apple" />
+        app:srcCompat="@drawable/apple"
+        android:contentDescription="@string/appleimage" />
 
 </android.support.constraint.ConstraintLayout>
