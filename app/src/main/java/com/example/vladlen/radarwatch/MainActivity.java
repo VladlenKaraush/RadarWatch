@@ -19,10 +19,12 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout constraintLayout;
     private TextView departmentName;
     private TextView universityName;
+    private AppIntro app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -38,7 +40,16 @@ public class MainActivity extends AppCompatActivity {
             button.setBackgroundColor(Color.GRAY);
             button.setEnabled(false);
         }
+//
+//        ViewIntro intro = new ViewIntro(this);
+//
+//        app = new AppIntro(this, 0);
+//        setContentView(intro);
 
+    }
+
+    public AppIntro getApp(){
+        return app;
     }
 
     public void onTheSiteButtonClicked(View v) {

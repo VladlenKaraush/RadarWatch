@@ -73,13 +73,11 @@
         android:id="@+id/appleImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/apple"
         app:layout_constraintBottom_toTopOf="@+id/onTheSite"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/universityName"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/apple"
-        android:contentDescription="@string/appleimage" />
+        tools:layout_editor_absoluteX="96dp" />
 
 </android.support.constraint.ConstraintLayout>
