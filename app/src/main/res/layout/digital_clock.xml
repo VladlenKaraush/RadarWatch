@@ -50,12 +50,13 @@
 
     <ImageButton
         android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="47dp"
+        android:layout_height="50dp"
         android:layout_marginEnd="8dp"
+        android:background="@null"
         android:onClick="settingsButtonClick"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable"
+        app:srcCompat="@drawable/ic_settings"
         tools:layout_editor_absoluteY="0dp"
         tools:ignore="MissingConstraints" />
 
