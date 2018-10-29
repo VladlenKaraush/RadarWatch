@@ -1,6 +1,7 @@
 package com.example.vladlen.radarwatch;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -100,7 +101,10 @@ public class RadarActivity extends AppCompatActivity {
             constraintLayout.setBackgroundColor(RadarView.getBackgroundColor());
 
             TextClock clock = findViewById(R.id.simpleDigitalClock);
-            clock.setFormat24Hour("hh:mm:ss");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                clock.setFormat12Hour("hh:mm:ss");
+                clock.setFormat24Hour("hh:mm:ss");
+            }
             clock.setTextColor(RadarView.getArcColor());
         }
         else{
