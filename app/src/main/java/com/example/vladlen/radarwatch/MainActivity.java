@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -20,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView departmentName;
     private TextView universityName;
     private AppIntro app;
+    private ViewIntro  m_viewIntro;
+    private int currView = -1;
+    public static final int	VIEW_INTRO		= 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +44,10 @@ public class MainActivity extends AppCompatActivity {
             button.setBackgroundColor(Color.GRAY);
             button.setEnabled(false);
         }
-//
-//        ViewIntro intro = new ViewIntro(this);
-//
+
 //        app = new AppIntro(this, 0);
-//        setContentView(intro);
+//        // Create view
+//        setView(VIEW_INTRO);
 
     }
 
@@ -68,5 +71,19 @@ public class MainActivity extends AppCompatActivity {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void setView(int viewID)
+    {
+        if (currView == viewID)
+        {
+            return;
+        }
+        currView = viewID;
+        if (currView == VIEW_INTRO)
+        {
+            m_viewIntro = new ViewIntro(this);
+            setContentView(m_viewIntro);
+        }
     }
 }

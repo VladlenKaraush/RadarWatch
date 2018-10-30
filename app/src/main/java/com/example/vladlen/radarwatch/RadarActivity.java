@@ -12,6 +12,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextClock;
+import android.widget.TextView;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RadarActivity extends AppCompatActivity {
 
@@ -99,6 +104,15 @@ public class RadarActivity extends AppCompatActivity {
             //colors
             ConstraintLayout constraintLayout = findViewById(R.id.clock_view);
             constraintLayout.setBackgroundColor(RadarView.getBackgroundColor());
+
+//            TextView textClock = findViewById(R.id.text_clock);
+//
+//            Date date = new Date();
+//            String strDateFormat = "hh:mm:ss";
+//            DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+//            String formattedDate= dateFormat.format(date);
+//            System.out.println("Current time of the day using Date - 12 hour format: " + formattedDate);
+//            textClock.setText(formattedDate);
 
             TextClock clock = findViewById(R.id.simpleDigitalClock);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

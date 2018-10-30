@@ -1,6 +1,5 @@
 package com.example.vladlen.radarwatch;
 
-
 //import android.app.Activity;
 import android.content.res.*;
 import android.content.Intent;
@@ -44,7 +43,7 @@ public class AppIntro
     static private final int TIME_LEAF					          = 256;
     static private final int NUM_SEG_APPLE				        = 60;
 
-    static private String  m_log = "THREE";
+    static private String  m_log = "KP2D";
 
     // DATA
     private long				m_curTime, m_prevTime;
@@ -230,32 +229,32 @@ public class AppIntro
         if (m_appState == APP_STATE_CIRCLE_INC)
         {
             drawCircleInc(canvas, deltaTimeMs);
-            //return;
+            return;
         }
         if (m_appState == APP_STATE_APPLE_2ND_RADIUS)
         {
             drawAppleEmptyInc(canvas, deltaTimeMs);
-            //return;
+            return;
         }
         if (m_appState == APP_STATE_APPLE_FILL_OPA)
         {
             drawAppleFillOpacity(canvas, deltaTimeMs);
-            //return;
+            return;
         }
         if (m_appState == APP_STATE_APPLE_FILL_SHADER)
         {
             drawAppleFillShader(canvas, deltaTimeMs);
-            //return;
+            return;
         }
         if (m_appState == APP_STATE_GRAFT)
         {
             drawAppleGraft(canvas, deltaTimeMs);
-           // return;
+            return;
         }
         if (m_appState == APP_STATE_LEAF)
         {
             drawAppleLeaf(canvas, deltaTimeMs);
-           // return;
+            return;
         }
     }
     //public int isFinished()
@@ -814,25 +813,35 @@ public class AppIntro
         if (touchType != AppIntro.TOUCH_DOWN)
             return false;
 
-        if (m_rectBtnStart.contains(x,  y))
-        {
-            //m_ctx.setView(ActivityMain.VIEW_GAME);
-            return false;
-        }
+        int stateNext = 0;
+//    if (ActivityMain.APP_RUN_MODE)
+//      stateNext = ActivityMain.VIEW_PLAY;
+//    else
+//      stateNext = ActivityMain.VIEW_MENU;
 
-        if (isConnectedToInternet() )
-        {
-            if (m_rectBtnWeb.contains(x,  y))
-            {
-                // go to web
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(m_strAmdUrl));
-                m_ctx.startActivity(browserIntent);
-                return false;
-            }
-        }
-        // check simple click => switch to next view
-        //m_ctx.setView(MainActivity.VIEW_GAME);
+//        if (m_rectBtnStart.contains(x,  y))
+//        {
+//            m_ctx.setMode(MainActivity.MODE_SOURCE_SHAPE);
+//            m_ctx.setView(stateNext);
+//            return false;
+//        }
+//
+//        if (isConnectedToInternet() )
+//        {
+//            if (m_rectBtnWeb.contains(x,  y))
+//            {
+//                // go to web
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(m_strAmdUrl));
+//                m_ctx.startActivity(browserIntent);
+//                return false;
+//            }
+//        }
+//        // check simple click => switch to next view
+//        m_ctx.setMode(MainActivity.MODE_SOURCE_SHAPE);
+//        m_ctx.setView(stateNext);
         return true;
     }	// onTouch
+
+
 }
 
