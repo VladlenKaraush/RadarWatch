@@ -282,6 +282,9 @@ public class RadarView extends View {
             STROKE_WIDTH = (int) (70 / 265. * radius);
             INNER_STROKE_WIDTH = (int) (35 / 265. * radius);
             midCircleRadius = (int) (50 / 265. * radius);
+            outerPaint.setStrokeWidth(STROKE_WIDTH);
+            midPaint.setStrokeWidth(STROKE_WIDTH);
+            innerPaint.setStrokeWidth(INNER_STROKE_WIDTH);
 
             int startTop = STROKE_WIDTH / 2 + outerCircleOffset;
             int startLeft = startTop;

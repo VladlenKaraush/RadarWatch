@@ -24,8 +24,6 @@ public class RadarActivity extends AppCompatActivity {
     SettingsView settingsView = null;
     boolean isSettingsView = false, isDigitalClock = false;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,15 +103,6 @@ public class RadarActivity extends AppCompatActivity {
             ConstraintLayout constraintLayout = findViewById(R.id.clock_view);
             constraintLayout.setBackgroundColor(RadarView.getBackgroundColor());
 
-//            TextView textClock = findViewById(R.id.text_clock);
-//
-//            Date date = new Date();
-//            String strDateFormat = "hh:mm:ss";
-//            DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-//            String formattedDate= dateFormat.format(date);
-//            System.out.println("Current time of the day using Date - 12 hour format: " + formattedDate);
-//            textClock.setText(formattedDate);
-
             TextClock clock = findViewById(R.id.simpleDigitalClock);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 clock.setFormat12Hour("hh:mm:ss");
@@ -125,5 +114,4 @@ public class RadarActivity extends AppCompatActivity {
             setupRadarView();
         }
     }
-
 }
